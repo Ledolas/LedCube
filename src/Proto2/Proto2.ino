@@ -11,7 +11,7 @@
 
 //Variables Interrupcion
 unsigned long previous_millis = 0;
-unsigned long intervalo = 20; // intervalo en ms para la interrupcion
+unsigned long intervalo = 200; // intervalo en ms para la interrupcion
 //Variables Registros
 byte byte_anodo; // Almaceno los datos de los anodos
 byte byte_catodo; // Almaceno capa a encender
@@ -55,7 +55,6 @@ void loop() {
   currentmillis = millis(); //Guardo el valor actual
   // - - Compruebo si han pasado 200 ms
   if ((currentmillis  - previous_millis) >= intervalo) {
-    for (int capa = 0 ; capa < n ; capa++ ) {
       for (int i = 0 ; i < nbytes ; i++ ) {
         byte_anodo = BooltoByte(cubo[capa], i * 8 );
         bitWrite(byte_anodo, capa, 1);
@@ -66,9 +65,12 @@ void loop() {
         //HIGH  CUANDO PARO LA TRANSMISION
         digitalWrite(latchPin, HIGH);
       }
+      capa++;
+      if(capa==n){
+        capa=0;
+        }
       previous_millis = millis();
     }
-  }
 }
 
 byte BooltoByte( boolean boolArray[ ], int celda) {
