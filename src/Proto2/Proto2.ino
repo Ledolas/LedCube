@@ -11,7 +11,7 @@
 
 //Variables Interrupcion
 unsigned long previous_millis = 0;
-unsigned long intervalo = 200; // intervalo en ms para la interrupcion
+unsigned long intervalo = 500; // intervalo en ms para la interrupcion
 //Variables Registros
 byte byte_anodo; // Almaceno los datos de los anodos
 byte byte_catodo; // Almaceno capa a encender
@@ -27,6 +27,8 @@ boolean cubo[2][4] = {
   {1, 0, 1, 0 } ,    //Capa 0
   {0, 1, 0, 1 }    //Capa 1
 };
+byte *BytestoSend; // Puntero
+//byte BytetoSend[];// Puntero Sinonima de la anterior
 
 /* boolean cubo[3][9] = {
   {1, 0, 1, 1, 0, 0, 0, 0, 1 },    //Capa 0
@@ -43,6 +45,7 @@ boolean cubo[2][4] = {
 
 void setup() {
   nbytes = bytesNecesarios( );// Calculo cuantos bytes necesito segun el cubo
+  BytestoSend = new byte[ nbytes];// Determino el tamaño que tiene el array despues de calcularlo
   pinMode(latchPin, OUTPUT);
   pinMode(clockPin, OUTPUT);
   pinMode(dataPin_anodo, OUTPUT);
@@ -52,27 +55,42 @@ void setup() {
 
 void loop() {
   unsigned long currentmillis = 0;
+  // Serial.println(nbytes );
   currentmillis = millis(); //Guardo el valor actual
   // - - Compruebo si han pasado 200 ms
   if ((currentmillis  - previous_millis) >= intervalo) {
-      for (int i = 0 ; i < nbytes ; i++ ) {
-        byte_anodo = BooltoByte(cubo[capa], i * 8 );
-        bitWrite(byte_anodo, capa, 1);
-        Serial.print("Byte anodo: "); Serial.println(byte_anodo, BIN);
-        //LOW  MIENTRAS TRANSMITO
-        digitalWrite(latchPin, LOW);
-        shiftOut(dataPin_anodo, clockPin, LSBFIRST, byte_anodo);
-        //HIGH  CUANDO PARO LA TRANSMISION
-        digitalWrite(latchPin, HIGH);
-      }
-      capa++;
-      if(capa==n){
-        capa=0;
-        }
-      previous_millis = millis();
+    BuildByteArray(BytestoSend, cubo[capa], capa);
+    IntroducirCatodo(BytestoSend,capa);
+    MostrarByteArray(BytestoSend);
+    //LOW  MIENTRAS TRANSMITO
+      digitalWrite(latchPin, LOW);
+      shiftOut(dataPin_anodo, clockPin, LSBFIRST, byte_anodo);
+      //HIGH  CUANDO PARO LA TRANSMISION
+      digitalWrite(latchPin, HIGH);
+    capa++;
+    if (capa == n) {
+      capa = 0;
     }
+    previous_millis = millis();
+  }
 }
 
+void BuildByteArray(byte BytestoSend[], boolean boolArray[ ], int capa) {
+  for (int i = 0; i < nbytes; i++) {
+    BytestoSend[i] = BooltoByte(cubo[capa], i * 8 );
+  }
+}
+
+void MostrarByteArray(byte BytesArray[] ) {
+  for (int i = 0; i < nbytes; i++) {
+    Serial.print("Byte i: "); Serial.println(BytestoSend[i], BIN);
+  }
+}
+
+void IntroducirCatodo(byte BytesArray[],int capa){
+    
+    bitWrite(BytesArray[0], capa ,1);
+  }
 byte BooltoByte( boolean boolArray[ ], int celda) {
   // Recibe u array booleano y un indice celda,
   // genera un byte con los 8 siguientes valores
@@ -98,4 +116,13 @@ int bytesNecesarios( ) {
     }
   }
   return (bits / 8) ;
+}
+
+// n*n % 8 + capa > 8
+byte=(n*n)/8;
+bit=((n*n)%8)+capa;
+ while(bit >= 8){
+  byte++;
+  bit-=8;
+ }
 }
