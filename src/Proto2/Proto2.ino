@@ -17,25 +17,26 @@ byte byte_anodo; // Almaceno los datos de los anodos
 byte byte_catodo; // Almaceno capa a encender
 int nbytes;// Cuantos bytes se necesitan para enviar los anodos
 // Variables CUBO :
-int n = 2; // cambiar dependiendo del Array a usar
+int n = 3; // cambiar dependiendo del Array a usar
 int n_capas = n;
 int n_ledcapa = n * n;
 int n_anodos = n * n * n;
 int capa = 0;
 // Arrays --> Cambiar n dependiendo que array usemos
+/*
 boolean cubo[2][4] = {
   {1, 0, 1, 0 } ,    //Capa 0
   {0, 1, 0, 1 }    //Capa 1
-};
-byte *BytestoSend; // Puntero
-//byte BytetoSend[];// Puntero Sinonima de la anterior
+};*/
 
-/* boolean cubo[3][9] = {
-  {1, 0, 1, 1, 0, 0, 0, 0, 1 },    //Capa 0
+
+ boolean cubo[3][9] = {
+  {1, 0, 1, 1, 0, 0, 0, 1, 1 },    //Capa 0
   {0, 0, 0, 1, 0, 0, 0, 1, 0 },    //Capa 1
   {0, 0, 0, 0, 0, 0, 0, 0, 1 }           //Capa 2
   };
-  /*boolean cubo[4][16] = {
+  /*
+  boolean cubo[4][16] = {
   // 0  1  2  3  4  5  6  7 |8  9 10 11 12 13 14 15|  Indices
   {1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0 }, //Capa 0
   {1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0 }, //Capa 1
@@ -43,8 +44,21 @@ byte *BytestoSend; // Puntero
   {1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0 }     //Capa 3
   };*/
 
+
+byte *BytestoSend; // Puntero
+//byte BytetoSend[];// Puntero Sinonima de la anterior
+//Cabeceras de las funciones
+int bytesNecesarios( ) ;
+byte BooltoByte( boolean boolArray[ ], int celda);
+void IntroducirCatodo(byte BytesArray[], int capa);
+void MostrarByteArray(byte BytesArray[] );
+void BuildByteArray(byte BytestoSend[], boolean boolArray[ ], int capa);
+
+
 void setup() {
   nbytes = bytesNecesarios( );// Calculo cuantos bytes necesito segun el cubo
+  
+  Serial.print("bytes necesarios: ");Serial.println(nbytes);
   BytestoSend = new byte[ nbytes];// Determino el tamaño que tiene el array despues de calcularlo
   pinMode(latchPin, OUTPUT);
   pinMode(clockPin, OUTPUT);
@@ -59,14 +73,15 @@ void loop() {
   currentmillis = millis(); //Guardo el valor actual
   // - - Compruebo si han pasado 200 ms
   if ((currentmillis  - previous_millis) >= intervalo) {
+    Serial.print("Capa: "); Serial.println(capa);
     BuildByteArray(BytestoSend, cubo[capa], capa);
-    IntroducirCatodo(BytestoSend,capa);
+    IntroducirCatodo(BytestoSend, capa);
     MostrarByteArray(BytestoSend);
     //LOW  MIENTRAS TRANSMITO
-      digitalWrite(latchPin, LOW);
-      shiftOut(dataPin_anodo, clockPin, LSBFIRST, byte_anodo);
-      //HIGH  CUANDO PARO LA TRANSMISION
-      digitalWrite(latchPin, HIGH);
+    digitalWrite(latchPin, LOW);
+    shiftOut(dataPin_anodo, clockPin, LSBFIRST, byte_anodo);
+    //HIGH  CUANDO PARO LA TRANSMISION
+    digitalWrite(latchPin, HIGH);
     capa++;
     if (capa == n) {
       capa = 0;
@@ -83,14 +98,19 @@ void BuildByteArray(byte BytestoSend[], boolean boolArray[ ], int capa) {
 
 void MostrarByteArray(byte BytesArray[] ) {
   for (int i = 0; i < nbytes; i++) {
-    Serial.print("Byte i: "); Serial.println(BytestoSend[i], BIN);
+    Serial.print("Byte i: "); Serial.println(BytesArray[i], BIN);
   }
 }
 
-void IntroducirCatodo(byte BytesArray[],int capa){
-    
-    bitWrite(BytesArray[0], capa ,1);
+void IntroducirCatodo(byte BytesArray[], int capa) {
+  int numbyte = n_ledcapa / 8;
+  int numbit = (n_ledcapa % 8) + capa;
+  while (numbit >= 8) {
+    numbyte++;
+    numbit -= 8;
   }
+  bitWrite(BytesArray[numbyte], 7-numbit,1);
+}
 byte BooltoByte( boolean boolArray[ ], int celda) {
   // Recibe u array booleano y un indice celda,
   // genera un byte con los 8 siguientes valores
@@ -115,14 +135,16 @@ int bytesNecesarios( ) {
       bits += 8;
     }
   }
+  Serial.print("bytes necesarios: ");Serial.println(nbytes);
   return (bits / 8) ;
 }
-
-// n*n % 8 + capa > 8
-byte=(n*n)/8;
-bit=((n*n)%8)+capa;
- while(bit >= 8){
+/*
+  // n*n % 8 + capa > 8
+  byte=(n*n)/8;
+  bit=((n*n)%8)+capa;
+  while(bit >= 8){
   byte++;
   bit-=8;
- }
-}
+  }
+  }
+*/
