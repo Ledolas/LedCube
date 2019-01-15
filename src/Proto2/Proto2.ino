@@ -17,7 +17,7 @@ byte byte_anodo; // Almaceno los datos de los anodos
 byte byte_catodo; // Almaceno capa a encender
 int nbytes;// Cuantos bytes se necesitan para enviar los anodos
 // Variables CUBO :
-int n = 3; // cambiar dependiendo del Array a usar
+int n = 8; // cambiar dependiendo del Array a usar
 int n_capas = n;
 int n_ledcapa = n * n;
 int n_anodos = n * n * n;
@@ -29,13 +29,13 @@ boolean cubo[2][4] = {
   {0, 1, 0, 1 }    //Capa 1
 };*/
 
-
+/*
  boolean cubo[3][9] = {
   {1, 0, 1, 1, 0, 0, 0, 1, 1 },    //Capa 0
   {0, 0, 0, 1, 0, 0, 0, 1, 0 },    //Capa 1
   {0, 0, 0, 0, 0, 0, 0, 0, 1 }           //Capa 2
   };
-  /*
+  
   boolean cubo[4][16] = {
   // 0  1  2  3  4  5  6  7 |8  9 10 11 12 13 14 15|  Indices
   {1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0 }, //Capa 0
@@ -44,6 +44,17 @@ boolean cubo[2][4] = {
   {1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0 }     //Capa 3
   };*/
 
+
+boolean cubo[8][64]={
+ {1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0 },// Capa 0
+ {1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0 },// Capa 1
+ {1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0 },// Capa 2
+ {1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0 },// Capa 3
+ {1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0 },// Capa 4
+ {1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0 },// Capa 5
+ {1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0 },// Capa 6
+ {1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0 } // Capa 7
+ };
 
 byte *BytestoSend; // Puntero
 //byte BytetoSend[];// Puntero Sinonima de la anterior
@@ -57,14 +68,14 @@ void BuildByteArray(byte BytestoSend[], boolean boolArray[ ], int capa);
 
 void setup() {
   nbytes = bytesNecesarios( );// Calculo cuantos bytes necesito segun el cubo
-  
+  Serial.begin(9600);
   Serial.print("bytes necesarios: ");Serial.println(nbytes);
   BytestoSend = new byte[ nbytes];// Determino el tamaño que tiene el array despues de calcularlo
   pinMode(latchPin, OUTPUT);
   pinMode(clockPin, OUTPUT);
   pinMode(dataPin_anodo, OUTPUT);
   pinMode(dataPin_catodo, OUTPUT);
-  Serial.begin(9600);
+  
 }
 
 void loop() {
@@ -97,6 +108,7 @@ void BuildByteArray(byte BytestoSend[], boolean boolArray[ ], int capa) {
 }
 
 void MostrarByteArray(byte BytesArray[] ) {
+  Serial.print("nbytes : "); Serial.println(nbytes);
   for (int i = 0; i < nbytes; i++) {
     Serial.print("Byte i: "); Serial.println(BytesArray[i], BIN);
   }
@@ -130,13 +142,13 @@ int bytesNecesarios( ) {
     bits = 8;
   } else {
     bits = 0;
-    while (bits < n_ledcapa) {
+    while (bits < n_ledcapa+n_capas) {
       //incremento cada 8 hasta que supere el valor necesario
       bits += 8;
     }
   }
   Serial.print("bytes necesarios: ");Serial.println(nbytes);
-  return (bits / 8) ;
+  return (bits / 8);
 }
 /*
   // n*n % 8 + capa > 8
