@@ -4,13 +4,14 @@
 //Los registros asociados a los catodos se rellenan segun la capa a encender del cubo,
 //este valor lo determina [n]
 // Asignacion de los Pines
+#include <TimerOne.h>
 #define latchPin  10        //Latch (Pin 12)
 #define clockPin  11        //Clock serie (Pin 11)
 #define dataPin_anodo  8      // DS (Pin 14) para anodos
 
 //Variables Interrupcion
 unsigned long previous_millis = 0;
-unsigned long intervalo = 5; // intervalo en ms para la interrupcion
+unsigned long intervalo = 100; // intervalo en ms para la interrupcion
 //Variables Registros
 byte byte_anodo; // Almaceno los datos de los anodos
 byte byte_catodo; // Almaceno capa a encender
@@ -21,6 +22,7 @@ int n_capas = n;
 int n_ledcapa = n * n;
 int n_anodos = n * n * n;
 int capa = 0;
+boolean primeraVez = true;
 // Arrays --> Cambiar n dependiendo que array usemos
 /*
   boolean cubo[2][4] = {
@@ -43,20 +45,21 @@ int capa = 0;
   {1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0 }     //Capa 3
   };*/
 
-/*
-boolean cubo[8][64] = {
-  {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },// Capa 0
-  {1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0 },// Capa 1
-  {1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0 },// Capa 2
-  {1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0 },// Capa 3
-  {1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0 },// Capa 4
-  {1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0 },// Capa 5
-  {1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0 },// Capa 6
-  {1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0 } // Capa 7
-};
-*/
-boolean cubo[8][64] = {
-  {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },// Capa 0
+
+boolean cubo[512] = {
+  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ,// Capa 0
+  1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0 ,// Capa 1
+  1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0 ,// Capa 2
+  1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0 ,// Capa 3
+  1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0 ,// Capa 4
+  1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0 ,// Capa 5
+  1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0 ,// Capa 6
+  1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0  // Capa 7
+  };
+
+  /*
+  boolean cubo[8][64] = {
+  {0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },// Capa 0
   {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },// Capa 1
   {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },// Capa 2
   {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },// Capa 3
@@ -64,8 +67,8 @@ boolean cubo[8][64] = {
   {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },// Capa 5
   {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },// Capa 6
   {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 } // Capa 7
-};
-
+  };
+*/
 
 byte *BytestoSend; // Puntero
 //byte BytetoSend[];// Puntero Sinonima de la anterior
@@ -77,7 +80,33 @@ void MostrarByteArray(byte BytesArray[] );
 void BuildByteArray(byte BytestoSend[], boolean boolArray[ ], int capa);
 
 
+void clearCubo(boolean boolArray[ ]) {
+  for (int i = 0; i < n*n*n; i++) {
+      boolArray[i] = 0 ;
+     }
+}
+void voxelWrite(int x, int y, int z, bool estado,boolean boolArray[]) {
+  boolArray[x + y*n + z*n*n] = 1;
+  //Serial.print("* ******** ");Serial.println((int )boolArray); 
+  //Serial.print("cubo[0][columna + fila * n] : ");Serial.println(cubo[0][columna + fila * n]);
+
+}
+void mostrarCubo(boolean cubo[ ] ){// no necesita el tamaño  // ---------------> PONER NLEDCAPA EN 
+  for (int i = 0; i < n; i++) {
+    Serial.println(" ");
+    for (int j = 0; j < n; j++) {
+      for (int k = 0; k < n; k++) {
+        Serial.print("  "); Serial.print(cubo[i + k*n + j * n*n]);
+        
+      }
+    }
+  }
+}
+
 void setup() {
+  clearCubo(cubo);
+  //voxelWrite(0, 0, 0, 1,  cubo);
+  //voxelWrite(1, 0, 0, 1,  cubo);
   nbytes = bytesNecesarios( );// Calculo cuantos bytes necesito segun el cubo
   Serial.begin(9600);
   Serial.print("bytes necesarios: "); Serial.println(nbytes);
@@ -85,47 +114,57 @@ void setup() {
   pinMode(latchPin, OUTPUT);
   pinMode(clockPin, OUTPUT);
   pinMode(dataPin_anodo, OUTPUT);
-  pinMode(dataPin_catodo, OUTPUT);
+  //Config Timer
+  Timer1.initialize(10000000);         // initialize timer1, and set a 1/2 second period
+  Timer1.attachInterrupt(Lanzacapas);  // attaches callback() as a timer overflow interrupt/ PASA EL PUNTERO CUANDOD NO LLEVA ()
 
 }
 
 void loop() {
-  unsigned long currentmillis = 0;
-  // Serial.println(nbytes );
-  currentmillis = millis(); //Guardo el valor actual
-  // - - Compruebo si han pasado 200 ms
-  if ((currentmillis  - previous_millis) >= intervalo) {
-    Serial.print("Capa: "); Serial.println(capa);
-    BuildByteArray(BytestoSend, cubo[capa], capa);
-    IntroducirCatodo(BytestoSend, capa);
-    MostrarByteArray(BytestoSend);
-    digitalWrite(latchPin, HIGH);
-    capa++;
-    if (capa == n) {
-      capa = 0;
-    }
-    previous_millis = millis();
+  // Animaciones
+  //for (int i = 0; i < 8; i++ ) {
+  if (primeraVez){
+    voxelWrite(0, 0, 0, 1,  cubo);
+    voxelWrite(1, 0, 0, 1,  cubo);
+    //primeraVez=false;
   }
+    //Serial.println((int )cubo);
+  //}
+  //;
+  //Serial.println("soy ek lloopppp");
+  //
 }
 
+void Lanzacapas() {
+  //Serial.print("Capa: "); Serial.println(capa);
+  BuildByteArray(BytestoSend, cubo+capa*n_ledcapa, capa);
+  IntroducirCatodo(BytestoSend, capa);
+  MostrarByteArray(BytestoSend);
+  capa++;
+  if (capa == n) {
+    capa = 0;
+  }
+  mostrarCubo(cubo);
+}
 void BuildByteArray(byte BytestoSend[], boolean boolArray[ ], int capa) {
 
   for (int i = 0; i < nbytes; i++) {
-    BytestoSend[i] = BooltoByte(cubo[capa], i * 8 );
+    BytestoSend[i] = BooltoByte(boolArray, i * 8 );
   }
 }
 
 void MostrarByteArray(byte BytesArray[] ) {
-  Serial.print("nbytes : "); Serial.println(nbytes);
+  //Serial.print("nbytes : "); Serial.println(nbytes);
   //LOW  MIENTRAS TRANSMITO
-
   digitalWrite(latchPin, LOW);
-  for (int i = nbytes-1; i >=0 ; i--) {
+  for (int i = nbytes - 1; i >= 0 ; i--) {
     shiftOut(dataPin_anodo, clockPin, LSBFIRST, BytesArray[i]);
-    Serial.print("Byte i: "); Serial.println(BytesArray[i], BIN);
+    //Serial.print("Byte : "); Serial.println(BytesArray[i], BIN);
   }
   //HIGH  CUANDO PARO LA TRANSMISION
-  digitalWrite(latchPin, LOW);
+
+  //delay(5);
+  digitalWrite(latchPin, HIGH);
 }
 
 void IntroducirCatodo(byte BytesArray[], int capa) {
@@ -164,13 +203,3 @@ int bytesNecesarios( ) {
   Serial.print("bytes necesarios: "); Serial.println(nbytes);
   return (bits / 8);
 }
-/*
-  // n*n % 8 + capa > 8
-  byte=(n*n)/8;
-  bit=((n*n)%8)+capa;
-  while(bit >= 8){
-  byte++;
-  bit-=8;
-  }
-  }
-*/
