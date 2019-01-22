@@ -9,6 +9,8 @@
 #define clockPin  11        //Clock serie (Pin 11)
 #define dataPin_anodo  8      // DS (Pin 14) para anodos
 
+#define INTERVALO 500000  //microsegundos entre interrupciones
+
 //Variables Interrupcion
 unsigned long previous_millis = 0;
 unsigned long intervalo = 100; // intervalo en ms para la interrupcion
@@ -105,8 +107,6 @@ void mostrarCubo(boolean cubo[ ] ){// no necesita el tamaño  // ---------------
 
 void setup() {
   clearCubo(cubo);
-  //voxelWrite(0, 0, 0, 1,  cubo);
-  //voxelWrite(1, 0, 0, 1,  cubo);
   nbytes = bytesNecesarios( );// Calculo cuantos bytes necesito segun el cubo
   Serial.begin(9600);
   Serial.print("bytes necesarios: "); Serial.println(nbytes);
@@ -115,24 +115,16 @@ void setup() {
   pinMode(clockPin, OUTPUT);
   pinMode(dataPin_anodo, OUTPUT);
   //Config Timer
-  Timer1.initialize(10000000);         // initialize timer1, and set a 1/2 second period
+  Timer1.initialize(INTERVALO);         // initialize timer1, and set a 1/2 second period
   Timer1.attachInterrupt(Lanzacapas);  // attaches callback() as a timer overflow interrupt/ PASA EL PUNTERO CUANDOD NO LLEVA ()
 
 }
 
 void loop() {
   // Animaciones
-  //for (int i = 0; i < 8; i++ ) {
-  if (primeraVez){
-    voxelWrite(0, 0, 0, 1,  cubo);
-    voxelWrite(1, 0, 0, 1,  cubo);
-    //primeraVez=false;
+  for (int i = 0; i < 8; i++ ) {
+    voxelWrite(i, i, 0, 1,  cubo);
   }
-    //Serial.println((int )cubo);
-  //}
-  //;
-  //Serial.println("soy ek lloopppp");
-  //
 }
 
 void Lanzacapas() {
@@ -144,7 +136,7 @@ void Lanzacapas() {
   if (capa == n) {
     capa = 0;
   }
-  mostrarCubo(cubo);
+//  mostrarCubo(cubo);
 }
 void BuildByteArray(byte BytestoSend[], boolean boolArray[ ], int capa) {
 
@@ -159,7 +151,7 @@ void MostrarByteArray(byte BytesArray[] ) {
   digitalWrite(latchPin, LOW);
   for (int i = nbytes - 1; i >= 0 ; i--) {
     shiftOut(dataPin_anodo, clockPin, LSBFIRST, BytesArray[i]);
-    //Serial.print("Byte : "); Serial.println(BytesArray[i], BIN);
+    Serial.print("Byte : "); Serial.println(BytesArray[i], BIN);
   }
   //HIGH  CUANDO PARO LA TRANSMISION
 
