@@ -1,6 +1,5 @@
 #include "ledlib.h"
 
-
 int n;
 int n_capas;
 int n_ledcapa;
@@ -90,4 +89,150 @@ void planoZ(int nplano, bool estado, bool boolArray[]) {
       voxelWrite(j, i, nplano, estado, boolArray);
     }
   }
+}
+void caritacapa(int capa,bool boolArray[],int plano ){
+  //Plano = 1 --> X
+  if(plano == 1){
+    lineWriteX(2, 0, 5, 0, capa,true,boolArray);
+    lineWriteX(2, 7, 5, 7, capa,true,boolArray);
+    lineWriteX(0, 2, 0, 5, capa,true,boolArray);
+    lineWriteX(7, 2, 7, 5, capa,true,boolArray);
+    voxelWrite(capa,1, 1,true,boolArray);
+    voxelWrite(capa,6, 1,true,boolArray); 
+    voxelWrite(capa,1, 6,true,boolArray);
+    voxelWrite(capa,6, 6,true,boolArray);
+    //ojos
+    voxelWrite(capa,7-2, 7-2,true,boolArray);
+    voxelWrite(capa,7-5, 7-2,true,boolArray);
+    //Sonrisa
+    voxelWrite(capa,7-1, 7-4,true,boolArray);
+    voxelWrite(capa,7-6, 7-4,true,boolArray);
+    voxelWrite(capa,7-2, 7-5,true,boolArray);
+    voxelWrite(capa,7-3, 7-5,true,boolArray);
+    voxelWrite(capa,7-4, 7-5,true,boolArray);
+    voxelWrite(capa,7-5, 7-5,true,boolArray);
+    }
+  //Plano = 2 --> Y
+  if(plano == 2){  
+    
+    lineWriteY(2, 0, 5, 0, capa,true,boolArray);
+    lineWriteY(2, 7, 5, 7, capa,true,boolArray);
+    lineWriteY(0, 2, 0, 5, capa,true,boolArray);
+    lineWriteY(7, 2, 7, 5, capa,true,boolArray);
+    voxelWrite(1,capa, 1,true,boolArray);
+    voxelWrite(6,capa, 1,true,boolArray); 
+    voxelWrite(1,capa, 6,true,boolArray);
+    voxelWrite(6,capa, 6,true,boolArray);
+    //ojos
+    voxelWrite(7-2,capa, 7-2,true,boolArray);
+    voxelWrite(7-5,capa, 7-2,true,boolArray);
+    //Sonrisa
+    voxelWrite(7-1,capa, 7-4,true,boolArray);
+    voxelWrite(7-6,capa, 7-4,true,boolArray);
+    voxelWrite(7-2,capa, 7-5,true,boolArray);
+    voxelWrite(7-3,capa, 7-5,true,boolArray);
+    voxelWrite(7-4,capa, 7-5,true,boolArray);
+    voxelWrite(7-5,capa, 7-5,true,boolArray);
+    
+    }
+  //Plano = 3 --> Z
+  if(plano == 3){
+    //Circulo
+  lineWriteZ(2, 0, 5, 0, capa,true,boolArray);
+  lineWriteZ(2, 7, 5, 7, capa,true,boolArray);
+  lineWriteZ(0, 2, 0, 5, capa,true,boolArray);
+  lineWriteZ(7, 2, 7, 5, capa,true,boolArray);
+  voxelWrite(1,1, capa,true,boolArray);
+  voxelWrite(1,6, capa,true,boolArray); 
+  voxelWrite(6,1, capa,true,boolArray);
+  voxelWrite(6,6, capa,true,boolArray);
+  //ojos
+  voxelWrite(2,2, capa,true,boolArray);
+  voxelWrite(2,5, capa,true,boolArray);
+  //Sonrisa
+  voxelWrite(4,1, capa,true,boolArray);
+  voxelWrite(4,6, capa,true,boolArray);
+  voxelWrite(5,2, capa,true,boolArray);
+  voxelWrite(5,3, capa,true,boolArray);
+  voxelWrite(5,4, capa,true,boolArray);
+  voxelWrite(5,5, capa,true,boolArray);
+    }
+}
+void caritaCube(bool boolArray[]){
+  caritacapa(7,boolArray,3);
+  caritacapa(0,boolArray,3);
+  caritacapa(7,boolArray,2);
+  caritacapa(0,boolArray,2);
+  caritacapa(0,boolArray,1);
+  caritacapa(7,boolArray,1);
+}
+
+void lineWriteZ(int x1,int y1 ,int x2, int y2,int capa,bool estado,bool boolArray[]){
+  int x=x1-x2; 
+  int y=y1-y2;
+  if(x<0){
+      x=-x;
+    }
+  if(y<0){
+      y=-y;
+    }
+    
+  if(x==0){
+    //Vario y 
+    for (int i=0; i<y+1;i++){
+        voxelWrite(x1,y1+i,capa,estado,boolArray);
+      }
+    }
+    if(y==0){
+    //Vario x 
+    for (int i=0; i<x+1;i++){
+        voxelWrite(x1+i,y1,capa,estado,boolArray);
+      }
+   }
+}
+void lineWriteY(int x1,int y1 ,int x2, int y2,int capa,bool estado,bool boolArray[]){
+  int x=x1-x2; 
+  int y=y1-y2;
+  if(x<0){
+      x=-x;
+    }
+  if(y<0){
+      y=-y;
+    }
+    
+  if(x==0){
+    //Vario y 
+    for (int i=0; i<y+1;i++){
+        voxelWrite(x1,capa,y1+i,estado,boolArray);
+      }
+    }
+    if(y==0){
+    //Vario x 
+    for (int i=0; i<x+1;i++){
+        voxelWrite(x1+i,capa,y1,estado,boolArray);
+      }
+   }
+}
+void lineWriteX(int x1,int y1 ,int x2, int y2,int capa,bool estado,bool boolArray[]){
+  int x=x1-x2; 
+  int y=y1-y2;
+  if(x<0){
+      x=-x;
+    }
+  if(y<0){
+      y=-y;
+    }
+    
+  if(x==0){
+    //Vario y 
+    for (int i=0; i<y+1;i++){
+        voxelWrite(capa,x1,y1+i,estado,boolArray);
+      }
+    }
+    if(y==0){
+    //Vario x 
+    for (int i=0; i<x+1;i++){
+        voxelWrite(capa,x1+i,y1,estado,boolArray);
+      }
+   }
 }

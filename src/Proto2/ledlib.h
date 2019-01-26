@@ -13,3 +13,8 @@ void perCuboImpares(bool boolArray[ ],int vertex);
 void planoX(int nplano, bool estado, bool boolArray[]);
 void planoY(int nplano, bool estado, bool boolArray[]);
 void planoZ(int nplano, bool estado, bool boolArray[]);
+void caritacapa(int capa,bool boolArray[],int plano );
+void caritaCube(bool boolArray[]);
+void lineWriteZ(int x1,int y1 ,int x2, int y2,int capa,bool estado,bool boolArray[]);
+void lineWriteY(int x1,int y1 ,int x2, int y2,int capa,bool estado,bool boolArray[]);
+void lineWriteX(int x1,int y1 ,int x2, int y2,int capa,bool estado,bool boolArray[]);
