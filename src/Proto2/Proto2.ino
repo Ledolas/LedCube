@@ -20,6 +20,56 @@ byte *BytestoSend;            // Puntero
 // Puntero Sinonima de la anterior --> byte BytetoSend[];
 unsigned animetimer = 0;
 
+void lineWriteZ(int x1,int y1 ,int x2, int y2,int capa,bool estado,bool boolArray[]){
+  int x=abs(x1-x2); 
+  int y=abs(y1-y2);
+  if(x==0){
+    //Vario y 
+    for (int i=0; i<y+1;i++){
+        voxelWrite(x1,y1+i,capa,estado,boolArray);
+      }
+    }
+    if(y==0){
+    //Vario x 
+    for (int i=0; i<x+1;i++){
+        voxelWrite(x1+i,y1,capa,estado,boolArray);
+      }
+    }
+}
+
+void caritacapa(int capa,bool boolArray[],int plano ){
+  //Plano = 1 --> X
+  if(plano == 1){
+    }
+  //Plano = 2 --> Y
+  if(plano == 2){  
+    }
+  //Plano = 3 --> Z
+  if(plano == 3){
+    //Circulo
+  lineWriteZ(2, 0, 5, 0, capa,true,cubo);
+  lineWriteZ(2, 7, 5, 7, capa,true,cubo);
+  lineWriteZ(0, 2, 0, 5, capa,true,cubo);
+  lineWriteZ(7, 2, 7, 5, capa,true,cubo);
+  voxelWrite(1,1, capa,true,cubo);
+  voxelWrite(1,6, capa,true,cubo); 
+  voxelWrite(6,1, capa,true,cubo);
+  voxelWrite(6,6, capa,true,cubo);
+  //ojos
+  voxelWrite(2,2, capa,true,cubo);
+  voxelWrite(2,5, capa,true,cubo);
+  //Sonrisa
+  voxelWrite(4,1, capa,true,cubo);
+  voxelWrite(4,6, capa,true,cubo);
+  voxelWrite(5,2, capa,true,cubo);
+  voxelWrite(5,3, capa,true,cubo);
+  voxelWrite(5,4, capa,true,cubo);
+  voxelWrite(5,5, capa,true,cubo);
+    }
+
+
+  }
+
 //Cabeceras de las funciones necesarias para el funcionamiento del cubo
 int bytesNecesarios( ) ;
 byte BooltoByte( boolean boolArray[ ], int celda);
@@ -52,10 +102,25 @@ void setup() {
 
 void loop() {
 
-  planoY(0,true,cubo);
-  planoZ(2,true,cubo);
+  //planoY(0,true,cubo);
+  //planoZ(2,true,cubo);
+  //planoX(4,true,cubo);
   
-  planoX(4,true,cubo);
+  //Circulo
+  //lineWriteZ(2, 0, 5, 0,3,true,cubo);
+   caritacapa(7,cubo,3);
+    
+  
+  
+
+
+  
+
+
+
+  //int (random(0,7));
+
+
 
   /*if ((millis() - previous_millis) >= INTERVALO2) {
     /*voxelWrite(0, 0, animetimer, true, cubo);
