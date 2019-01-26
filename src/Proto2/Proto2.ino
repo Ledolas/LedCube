@@ -5,9 +5,10 @@
 #define latchPin  10                          //Latch (Pin 12)
 #define clockPin  11                          //Clock serie (Pin 11)
 #define dataPin_anodo  8                      // DS (Pin 14) para anodos
-#define INTERVALO 10                           //microsegundos entre interrupciones
-#define INTERVALO2 100000
+#define INTERVALO 1                           //microsegundos entre interrupciones
+#define INTERVALO2 10000
 //Variables Interrupcion
+unsigned long previous_millis = 0;
 //Variables Registros
 byte byte_anodo;              // Almaceno los datos de los anodos
 byte byte_catodo;             // Almaceno capa a encender
@@ -16,8 +17,8 @@ int nbytes;                   // Cuantos bytes se necesitan para enviar los anod
 int capa = 0;
 boolean cubo[512] ;           //Array que alamacena el valor de los anodos
 byte *BytestoSend;            // Puntero
-                              // Puntero Sinonima de la anterior --> byte BytetoSend[]; 
-
+// Puntero Sinonima de la anterior --> byte BytetoSend[];
+unsigned animetimer = 0;
 
 //Cabeceras de las funciones necesarias para el funcionamiento del cubo
 int bytesNecesarios( ) ;
@@ -33,25 +34,54 @@ void setup() {
   n_capas = n;
   n_ledcapa = n * n;
   n_anodos = n * n * n;
-  clearCube(cubo);            
+  clearCube(cubo);
   nbytes = bytesNecesarios( );    // Calculo cuantos bytes necesito segun el tamaño del cubo
-  //Serial.begin(9600);
+  Serial.begin(9600);
   //Serial.print("bytes necesarios: "); Serial.println(nbytes);
   BytestoSend = new byte[ nbytes];// Determino el tamaño que tiene el array despues de calcularlo
   pinMode(latchPin, OUTPUT);
   pinMode(clockPin, OUTPUT);
   pinMode(dataPin_anodo, OUTPUT);
+  //Temporizacoin animaciones
+  previous_millis = millis();
+
   //Config Timer
   Timer1.initialize(INTERVALO);
-  Timer1.attachInterrupt(Lanzacapas);  // attaches callback() as a timer overflow interrupt/ 
+  Timer1.attachInterrupt(Lanzacapas);  // attaches callback() as a timer overflow interrupt/
 }
+
 void loop() {
+
+  planoY(0,true,cubo);
+  planoZ(2,true,cubo);
   
+  planoX(4,true,cubo);
+
+  /*if ((millis() - previous_millis) >= INTERVALO2) {
+    /*voxelWrite(0, 0, animetimer, true, cubo);
+    animetimer++;
+    if (animetimer >= 7) {
+      animetimer = 0;
+      perCuboPares(cubo);
+    }
+
+      Serial.println("pargelas");
+      fullCube(cubo);
+
+    previous_millis = millis();
+    }
   //fullCube(cubo);
   //perCuboPares(cubo);
   //perCuboImpares(cubo,0);
   //perCuboImpares(cubo,1);
-
+  //Serial.println(animetimer++);
+  if (animetimer >= 10) {
+    animetimer = 0;
+    fullCube(cubo);
+    //perCuboPares(cubo);
+    clearCube(cubo); 
+  }
+  */
 }
 
 
@@ -64,6 +94,7 @@ void Lanzacapas() {
   if (capa == n) {
     capa = 0;
   }
+  animetimer++;
 }
 void mostrarCubo(boolean cubo[ ] ) {
   for (int i = 0; i < n; i++) {
