@@ -18,3 +18,7 @@ void caritaCube(bool boolArray[]);
 void lineWriteZ(int x1,int y1 ,int x2, int y2,int capa,bool estado,bool boolArray[]);
 void lineWriteY(int x1,int y1 ,int x2, int y2,int capa,bool estado,bool boolArray[]);
 void lineWriteX(int x1,int y1 ,int x2, int y2,int capa,bool estado,bool boolArray[]);
+void diagonalLine(bool boolArray[ ]);
+void moverPlanoZ(bool boolArray[ ]);
+void moverPlanoX(bool boolArray[ ]);
+void voxelLluvia(bool boolArray[ ]);

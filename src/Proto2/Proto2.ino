@@ -56,25 +56,20 @@ void setup() {
   pinMode(dataPin_anodo, OUTPUT);
   //Temporizacoin animaciones
   previous_millis = millis();
+  caritaCube(cubo);
 
   //Config Timer
   Timer1.initialize(INTERVALO);
   Timer1.attachInterrupt(Lanzacapas);  // attaches callback() as a timer overflow interrupt/
+ 
 }
-void DiagonalLine(bool boolArray[ ])
-{
-  for (int i = 0; i < n ; i++) {
-    voxelWrite(i, i, i, true, cubo);
-    //  voxelWrite(n-i,i,i,true,cubo);
-    //voxelWrite(n-i,n-i,i,true,cubo);
-    //voxelWrite(n-i,i,n-i,true,cubo);
-  }
-}
+
+
 void loop() {
 
-
-  if (animetimer >= 8 * 4 ) {
+  if (animetimer >= 8 * 20 ) {
     /*if(alterna){
+
       clearCube(cubo);
       voxelWrite(3,3,3,true,cubo);
       alterna = false;
@@ -82,42 +77,31 @@ void loop() {
       fullCube(cubo);
       alterna = true;
       }*/
-    //planosRandom(cubo);
-    clearCube(cubo);
-    perimetralCube(true, cubo, i, 0);
-    // voxelWrite(i,j,k,true,cubo);
-    // planoX(j,true,cubo);
-    // planoY(j,true,cubo);
-
-    //-----recorre todos los voxels
-    i++;
+    
+    moverPlanoZ(cubo);
+   
     if (i > n) {
+      
+     caritaCube(cubo);
+      
       i = 0;
       j++;
-    } if (j > n - 1) {
+      if (j > n*2 ) {
+      //clearCube(cubo);
+     
+    }
+    }/* if (j > n - 1) {
       j = 0;
       k++;
     }
     if (k > n - 1) {
       k = 0;
-      i = 0;
-      j = 0;
-    }
-
+      //i = 0;
+      //j = 0;
+    }*/
+    i++;
     animetimer = 0;
   }
-
-  //caritaCube(cubo);
-  //DiagonalLine(cubo);
-  //voxelWrite(0,0,0,true,cubo);
-  // voxelWrite(1,1,1,true,cubo);
-  //voxelWrite(2,2,2,true,cubo);
-  //voxelWrite(3,3,3,true,cubo);
-  //voxelWrite(4,4,4,true,cubo);
-  //voxelWrite(5,5,5,true,cubo);
-  //voxelWrite(6,6,6,true,cubo);
-  //voxelWrite(7,7,7,true,cubo);
-  //voxelWrite(8,8,8,true,cubo);
 }
 
 

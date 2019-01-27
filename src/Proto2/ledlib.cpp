@@ -105,6 +105,7 @@ void caritacapa(int capa, bool boolArray[], int plano ) {
     //ojos
     voxelWrite(capa, 7 - 2, 7 - 2, true, boolArray);
     voxelWrite(capa, 7 - 5, 7 - 2, true, boolArray);
+    //voxelWrite(capa, 7 - 4, 7 - 2, true, boolArray);
     //Sonrisa
     voxelWrite(capa, 7 - 1, 7 - 4, true, boolArray);
     voxelWrite(capa, 7 - 6, 7 - 4, true, boolArray);
@@ -237,3 +238,47 @@ void lineWriteX(int x1, int y1 , int x2, int y2, int capa, bool estado, bool boo
     }
   }
 }
+
+void diagonalLine(bool boolArray[ ])
+{
+  for (int i = 0; i < n ; i++) {
+    voxelWrite(i, i, i, true, boolArray);
+    voxelWrite((n - 1) - i, i, i, true, boolArray);
+    voxelWrite((n - 1) - i, (n - 1) - i, i, true, boolArray);
+    voxelWrite((n - 1) - i, i, (n - 1) - i, true, boolArray);
+  }
+}
+
+void moverPlanoZ(bool boolArray[ ])
+{
+  for (int i = 0 ; i < n * n * n ; i++) {
+    if (i + n * n > (n * n * n - n * n)) {
+      boolArray[i] = 0;
+    } else {
+      boolArray[i] = boolArray[i + n * n];
+    }
+  }
+}
+void moverPlanoX(bool boolArray[ ])
+{
+  for (int i = 0 ; i < n * n * n ; i++) {
+
+    if (i + n  > n * n * n - n) {
+      boolArray[(n * n * n - 1) - i] = boolArray[i];
+    } else {
+      boolArray[i] = boolArray[i + n ];
+    }
+  }
+}
+
+/*void voxelLluvia(bool boolArray[ ])
+{
+  voxelWrite(int(random(0, 8)), int(random(0, 8)), 6, true, cubo);
+  voxelWrite(int(random(0, 8)), int(random(0, 8)), 6, true, cubo);
+  voxelWrite(int(random(0, 8)), int(random(0, 8)), 6, true, cubo);
+  voxelWrite(int(random(0, 8)), int(random(0, 8)), 6, true, cubo);
+  voxelWrite(int(random(0, 8)), int(random(0, 8)), 6, true, cubo);
+  voxelWrite(int(random(0, 8)), int(random(0, 8)), 6, true, cubo);
+  voxelWrite(int(random(0, 8)), int(random(0, 8)), 6, true, cubo);
+  voxelWrite(int(random(0, 8)), int(random(0, 8)), 6, true, cubo);
+}*/
