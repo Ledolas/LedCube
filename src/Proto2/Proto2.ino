@@ -56,7 +56,8 @@ void setup() {
   pinMode(dataPin_anodo, OUTPUT);
   //Temporizacoin animaciones
   previous_millis = millis();
-  caritaCube(cubo);
+
+  numero(cubo);
 
   //Config Timer
   Timer1.initialize(INTERVALO);
@@ -65,9 +66,10 @@ void setup() {
 }
 
 
+
 void loop() {
 
-  if (animetimer >= 8 * 20 ) {
+  if (animetimer >= 8 * 10 ) {
     /*if(alterna){
 
       clearCube(cubo);
@@ -75,15 +77,17 @@ void loop() {
       alterna = false;
       }else{
       fullCube(cubo);
+      
       alterna = true;
       }*/
     
+    //moverPlanoX(cubo);
     moverPlanoZ(cubo);
+   
    
     if (i > n) {
       
-     caritaCube(cubo);
-      
+      numero(cubo);
       i = 0;
       j++;
       if (j > n*2 ) {

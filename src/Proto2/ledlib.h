@@ -22,3 +22,5 @@ void diagonalLine(bool boolArray[ ]);
 void moverPlanoZ(bool boolArray[ ]);
 void moverPlanoX(bool boolArray[ ]);
 void voxelLluvia(bool boolArray[ ]);
+void seno(bool boolArray[ ]);
+void numero(bool boolArray[ ]);

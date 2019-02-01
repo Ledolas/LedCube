@@ -1,4 +1,5 @@
 #include "ledlib.h"
+#include <stdlib.h>
 
 
 int n;
@@ -270,15 +271,39 @@ void moverPlanoX(bool boolArray[ ])
     }
   }
 }
+void numero(bool boolArray[ ])
+{
+ 
+  lineWriteX(2, 6, 5, 6, 0, true, boolArray);
+  lineWriteX(3, 6, 4, 6, 1, true, boolArray);
+  lineWriteX(3, 6, 4, 6, 2, true, boolArray);
+  lineWriteX(3, 6, 4, 6, 3, true, boolArray);
+  lineWriteX(3, 6, 4, 6,4, true, boolArray);
+  voxelWrite(4,6,6,true,boolArray);
+  lineWriteX(3, 6, 5, 6, 5, true, boolArray);
+  lineWriteX(3, 6, 4, 6, 6, true, boolArray);
+}
 
 /*void voxelLluvia(bool boolArray[ ])
 {
-  voxelWrite(int(random(0, 8)), int(random(0, 8)), 6, true, cubo);
-  voxelWrite(int(random(0, 8)), int(random(0, 8)), 6, true, cubo);
-  voxelWrite(int(random(0, 8)), int(random(0, 8)), 6, true, cubo);
-  voxelWrite(int(random(0, 8)), int(random(0, 8)), 6, true, cubo);
-  voxelWrite(int(random(0, 8)), int(random(0, 8)), 6, true, cubo);
-  voxelWrite(int(random(0, 8)), int(random(0, 8)), 6, true, cubo);
-  voxelWrite(int(random(0, 8)), int(random(0, 8)), 6, true, cubo);
-  voxelWrite(int(random(0, 8)), int(random(0, 8)), 6, true, cubo);
+  voxelWrite(int(rand(0, 8)), int(rand(0, 8)), 6, true, cubo);
+  voxelWrite(int(rand(0, 8)), int(rand(0, 8)), 6, true, cubo);
+  voxelWrite(int(rand(0, 8)), int(rand(0, 8)), 6, true, cubo);
+  voxelWrite(int(rand(0, 8)), int(rand(0, 8)), 6, true, cubo);
+  voxelWrite(int(rand(0, 8)), int(rand(0, 8)), 6, true, cubo);
+  voxelWrite(int(rand(0, 8)), int(rand(0, 8)), 6, true, cubo);
+  voxelWrite(int(rand(0, 8)), int(rand(0, 8)), 6, true, cubo);
+  voxelWrite(int(rand(0, 8)), int(rand(0, 8)), 6, true, cubo);
 }*/
+
+void seno(bool boolArray[ ])
+{
+  lineWriteX(0,0 ,0, 8,0,true,cubo);
+  /*lineWriteX(0,0 ,0, 8,1,true,cubo);
+  lineWriteX(0,0 ,0, 8,2,true,cubo);
+  lineWriteX(0,0 ,0, 8,3,true,cubo);
+  lineWriteX(0,0 ,0, 8,4,true,cubo);
+  lineWriteX(0,0 ,0, 8,5,true,cubo);
+  lineWriteX(0,0 ,0, 8,6,true,cubo);
+  lineWriteX(0,0 ,0, 8,7,true,cubo);*/
+}
