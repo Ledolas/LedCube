@@ -19,8 +19,8 @@ void lineWriteZ(int x1,int y1 ,int x2, int y2,int capa,bool estado,bool boolArra
 void lineWriteY(int x1,int y1 ,int x2, int y2,int capa,bool estado,bool boolArray[]);
 void lineWriteX(int x1,int y1 ,int x2, int y2,int capa,bool estado,bool boolArray[]);
 void diagonalLine(bool boolArray[ ]);
-void moverPlanoZ(bool boolArray[ ]);
-void moverPlanoX(bool boolArray[ ]);
+void moverPlanoZ(bool boolArray[ ], int dir);
+void moverPlanoX(bool boolArray[ ], int dir);
 void voxelLluvia(bool boolArray[ ]);
 void seno(bool boolArray[ ]);
 void numero(bool boolArray[ ]);
